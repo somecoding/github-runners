@@ -1,0 +1,24 @@
+services:
+  gh-cli-runner:
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: ./.docker/Dockerfile
+      args:
+        RUNNER_VERSION: $RUNNER_VERSION
+
+    environment:
+      TOKEN: $TOKEN
+      GH_RUNNER_GROUP: $GH_RUNNER_GROUP
+      GH_ORGANISATION: $GH_ORGANISATION
+    deploy:
+      replicas: '${WORKER_COUNT}'
+    networks:
+      - default
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "3"
